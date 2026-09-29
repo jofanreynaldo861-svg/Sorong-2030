@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorong 2030: The Grand Metropolis of Southwest Papua</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        timber: '#2D1E18',
+                        ocean: '#0F4C5C',
+                        indigoForest: '#1F2421',
+                        brass: '#E5A93C',
+                        brassDark: '#B88222',
+                        papiro: '#F4E8C1',
+                        papiroDark: '#E4D3A2'
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom Native Textures & Visual Polish */
+        body {
+            background-color: #1F2421;
+            background-image: radial-gradient(#2D1E18 1px, transparent 0);
+            background-size: 24px 24px;
+            color: #F4E8C1;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .wood-panel {
+            background: linear-gradient(135deg, #2D1E18 0%, #1a110d 100%);
+            border: 2px solid #E5A93C;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(229, 169, 60, 0.1);
+        }
+
+        .papiro-card {
+            background: linear-gradient(135deg, #F4E8C1 0%, #E4D3A2 100%);
+            color: #2D1E18;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-brass {
+            background: linear-gradient(180deg, #E5A93C 0%, #B88222 100%);
+            color: #2D1E18;
+            font-weight: 700;
+            text-shadow: 0px 1px 0px rgba(255,255,255,0.3);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-brass:hover {
+            background: linear-gradient(180deg, #f0b548 0%, #c78f28 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px -2px rgba(229, 169, 60, 0.4);
+        }
+
+        /* Spotlight System */
+        #spotlight-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 90;
+            pointer-events: none;
+            transition: all 0.4s ease-in-out;
+            background: rgba(15, 20, 18, 0.82);
+        }
+
+        .spotlight-ring {
+            position: absolute;
+            border: 3px solid #E5A93C;
+            border-radius: 12px;
+            box-shadow: 0 0 0 9999px rgba(15, 20, 18, 0.82), 0 0 25px #E5A93C;
+            animation: pulse-ring 2s infinite;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 9999px rgba(15, 20, 18, 0.82), 0 0 15px #E5A93C; }
+            50% { box-shadow: 0 0 0 9999px rgba(15, 20, 18, 0.82), 0 0 30px #f0b548; }
+            100% { box-shadow: 0 0 0 9999px rgba(15, 20, 18, 0.82), 0 0 15px #E5A93C; }
+        }
+
+        /* Meter Progress Transitions */
+        .meter-bar {
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Pattern overlay for Papua cultural motif */
+        .papua-pattern {
+            background-color: #2d1e18;
+            opacity: 0.8;
+            background-image:  radial-gradient(#e5a93c 0.75px, transparent 0.75px), radial-gradient(#e5a93c 0.75px, #2d1e18 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0,15px 15px;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12 flex flex-col justify-between">
+
+    <header class="w-full bg-timber border-b-2 border-brass px-4 py-3 sticky top-0 z-40 shadow-xl">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-brass flex items-center justify-center text-timber font-bold text-xl shadow-inner">
+                    <i class="fa-solid fa-city"></i>
+                </div>
+                <div>
+                    <h1 class="font-cinzel text-lg md:text-xl font-bold text-brass tracking-wider">SORONG 2030</h1>
+                    <p class="text-xs text-papiro opacity-90">The Grand Metropolis of Southwest Papua</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button id="btn-tutorial" onclick="startTutorial()" class="px-3 py-1.5 rounded-lg border border-brass text-brass hover:bg-brass hover:text-timber text-xs font-semibold transition flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap"></i> Panduan Tutorial
+                </button>
+                <div class="text-xs px-3 py-1.5 bg-indigoForest rounded-lg border border-brass/30 text-papiro">
+                    <i class="fa-solid fa-book-bookmark text-brass mr-1"></i> Suplemen Bab 5
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto w-full px-4 pt-6 flex-grow">
+        
+        <!-- DASHBOARD STATUS METERS -->
+        <section id="status-dashboard" class="wood-panel rounded-xl p-4 md:p-6 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b border-brass/20 gap-2">
+                <h2 class="font-cinzel text-base md:text-lg font-bold text-papiro flex items-center gap-2">
+                    <i class="fa-solid fa-gauge-high text-brass"></i> Indikator Keseimbangan Kota Sorong
+                </h2>
+                <span class="text-xs text-brass/80 italic">*Jaga kedua indikator agar tidak menyentuh krisis (&lt;20%)</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Meter 1: Kemajuan & Infrastruktur -->
+                <div id="meter-kemajuan-container" class="bg-indigoForest/60 p-3.5 rounded-lg border border-ocean/50">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="text-xs font-bold text-papiro flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-cyan-400"></i> Meter Kemajuan (Ekonomi & Modernisasi)
+                        </span>
+                        <span id="score-kemajuan-text" class="text-xs font-extrabold text-cyan-400">50%</span>
+                    </div>
+                    <div class="w-full bg-timber/80 h-4 rounded-full p-0.5 border border-cyan-500/30 overflow-hidden">
+                        <div id="bar-kemajuan" class="meter-bar h-full bg-gradient-to-r from-cyan-600 to-cyan-400 rounded-full" style="width: 50%;"></div>
+                    </div>
+                    <p class="text-[11px] text-papiro/70 mt-1">Kapasitas pelabuhan, jaringan jalan, energi, & pertumbuhan ekonomi.</p>
+                </div>
+
+                <!-- Meter 2: Identitas Budaya -->
+                <div id="meter-budaya-container" class="bg-indigoForest/60 p-3.5 rounded-lg border border-brass/30">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="text-xs font-bold text-papiro flex items-center gap-2">
+                            <i class="fa-solid fa-masks-theater text-brass"></i> Meter Identitas Budaya & Hak Adat
+                        </span>
+                        <span id="score-budaya-text" class="text-xs font-extrabold text-brass">50%</span>
+                    </div>
+                    <div class="w-full bg-timber/80 h-4 rounded-full p-0.5 border border-brass/30 overflow-hidden">
+                        <div id="bar-budaya" class="meter-bar h-full bg-gradient-to-r from-amber-600 to-brass rounded-full" style="width: 50%;"></div>
+                    </div>
+                    <p class="text-[11px] text-papiro/70 mt-1">Kelestarian hutan sagu ulayat, tradisi Suku Moi, & partisipasi lokal.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- GAME AREA CONTAINER -->
+        <section id="game-container">
+            <!-- SKENARIO KARTU SIMULASI -->
+            <div id="scenario-card" class="wood-panel rounded-2xl p-5 md:p-8 relative">
+                
+                <div class="flex justify-between items-center mb-4">
+                    <span id="scenario-badge" class="px-3 py-1 rounded-full bg-ocean text-papiro text-xs font-bold border border-brass/40 uppercase tracking-wider">
+                        Skenario 1 / 5
+                    </span>
+                    <span id="scenario-location" class="text-xs text-brass font-semibold">
+                        <i class="fa-solid fa-location-dot"></i> Sorong Kepulauan
+                    </span>
+                </div>
+
+                <!-- Scenario Title & Narrative -->
+                <h3 id="scenario-title" class="font-cinzel text-xl md:text-2xl font-bold text-brass mb-3">
+                    Pengembangan Mega Pelabuhan Peti Kemas Sorong
+                </h3>
+                
+                <div class="papiro-card rounded-xl p-4 md:p-5 mb-6 text-sm md:text-base leading-relaxed">
+                    <p id="scenario-description">
+                        Pemerintah merencanakan perluasan Dermaga Pelabuhan Sorong menjadi Hub Logistik Internasional Pasifik. Namun, area reklamasi yang direncanakan berbatasan langsung dengan area penangkapan ikan tradisional dan jalur perahu kora-kora milik masyarakat adat lokal. Bagaimana arah kebijakan pembangunan Anda?
+                    </p>
+                </div>
+
+                <!-- 4 Choice Options -->
+                <div id="choices-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <!-- Option A -->
+                    <button onclick="selectOption(0)" class="choice-btn p-4 rounded-xl bg-indigoForest hover:bg-timber border border-brass/30 text-left transition flex flex-col justify-between group">
+                        <div class="flex items-start gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-brass/20 text-brass font-bold flex items-center justify-center shrink-0 border border-brass/40 group-hover:bg-brass group-hover:text-timber">A</span>
+                            <span id="opt-text-0" class="text-xs md:text-sm text-papiro font-medium">Bangun pelabuhan penuh tanpa reklamasi pantai adat, ganti dengan pelabuhan terapung ramah lingkungan.</span>
+                        </div>
+                    </button>
+                    <!-- Option B -->
+                    <button onclick="selectOption(1)" class="choice-btn p-4 rounded-xl bg-indigoForest hover:bg-timber border border-brass/30 text-left transition flex flex-col justify-between group">
+                        <div class="flex items-start gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-brass/20 text-brass font-bold flex items-center justify-center shrink-0 border border-brass/40 group-hover:bg-brass group-hover:text-timber">B</span>
+                            <span id="opt-text-1" class="text-xs md:text-sm text-papiro font-medium">Lanjutkan reklamasi penuh demi efisiensi anggaran dan pertumbuhan ekonomi maksimal.</span>
+                        </div>
+                    </button>
+                    <!-- Option C -->
+                    <button onclick="selectOption(2)" class="choice-btn p-4 rounded-xl bg-indigoForest hover:bg-timber border border-brass/30 text-left transition flex flex-col justify-between group">
+                        <div class="flex items-start gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-brass/20 text-brass font-bold flex items-center justify-center shrink-0 border border-brass/40 group-hover:bg-brass group-hover:text-timber">C</span>
+                            <span id="opt-text-2" class="text-xs md:text-sm text-papiro font-medium">Musyawarah adat (BAMAG) untuk pembagian zona bahari & restrukturisasi kepemilikan saham usaha lokal.</span>
+                        </div>
+                    </button>
+                    <!-- Option D -->
+                    <button onclick="selectOption(3)" class="choice-btn p-4 rounded-xl bg-indigoForest hover:bg-timber border border-brass/30 text-left transition flex flex-col justify-between group">
+                        <div class="flex items-start gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-brass/20 text-brass font-bold flex items-center justify-center shrink-0 border border-brass/40 group-hover:bg-brass group-hover:text-timber">D</span>
+                            <span id="opt-text-3" class="text-xs md:text-sm text-papiro font-medium">Batalkan megaproyek pelabuhan dan alokasikan seluruh dana ke pasar tradisional pesisir.</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Educational Feedback Box (Hidden initially) -->
+                <div id="feedback-box" class="hidden rounded-xl p-5 border-2 mb-6 bg-timber/90">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i id="feedback-icon" class="fa-solid fa-circle-info text-2xl text-brass"></i>
+                        <h4 id="feedback-title" class="font-cinzel font-bold text-papiro text-lg">Analisis Dampak Keputusan</h4>
+                    </div>
+                    <p id="feedback-text" class="text-xs md:text-sm text-papiro/90 leading-relaxed mb-4">
+                        Penjelasan analisis akan tampil di sini.
+                    </p>
+                    <div id="feedback-impacts" class="flex gap-4 text-xs font-bold mb-4">
+                        <span id="impact-kemajuan" class="px-2.5 py-1 rounded bg-ocean/40 text-cyan-300">Kemajuan: +0</span>
+                        <span id="impact-budaya" class="px-2.5 py-1 rounded bg-brass/20 text-brass">Budaya: +0</span>
+                    </div>
+                    <button onclick="nextScenario()" class="btn-brass px-6 py-2.5 rounded-lg text-sm w-full sm:w-auto flex items-center justify-center gap-2">
+                        Lanjutkan Skenario Berikutnya <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- RESULT & REFLECTION SECTION (Hidden initially) -->
+            <div id="result-card" class="hidden wood-panel rounded-2xl p-6 md:p-8">
+                <div class="text-center mb-8 border-b border-brass/20 pb-6">
+                    <span class="px-4 py-1.5 rounded-full bg-brass/20 text-brass text-xs font-bold border border-brass uppercase tracking-widest">
+                        Evaluasi Akhir Simulasi
+                    </span>
+                    <h2 class="font-cinzel text-2xl md:text-3xl font-extrabold text-brass mt-3">
+                        Laporan Pengambil Kebijakan Sorong 2030
+                    </h2>
+                    <p class="text-xs md:text-sm text-papiro/80 mt-1">
+                        Hasil akhir profil kepemimpinan tata kota Anda berdasarkan pilihan strategis.
+                    </p>
+                </div>
+
+                <!-- Final Scores Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-indigoForest p-5 rounded-xl border border-ocean text-center">
+                        <i class="fa-solid fa-chart-pie text-3xl text-cyan-400 mb-2"></i>
+                        <div class="text-xs text-papiro/70 uppercase tracking-wider font-semibold">Skor Kemajuan Modern</div>
+                        <div id="final-kemajuan" class="text-3xl font-extrabold text-cyan-400 mt-1">0%</div>
+                    </div>
+                    <div class="bg-indigoForest p-5 rounded-xl border border-brass/40 text-center">
+                        <i class="fa-solid fa-landmark-dome text-3xl text-brass mb-2"></i>
+                        <div class="text-xs text-papiro/70 uppercase tracking-wider font-semibold">Skor Identitas Budaya</div>
+                        <div id="final-budaya" class="text-3xl font-extrabold text-brass mt-1">0%</div>
+                    </div>
+                </div>
+
+                <!-- Evaluation Narrative -->
+                <div class="papiro-card rounded-xl p-5 mb-8">
+                    <h3 class="font-cinzel font-bold text-timber text-lg mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-scroll"></i> Predikat Kepemimpinan & Analisis
+                    </h3>
+                    <p id="leadership-title" class="font-bold text-ocean text-base md:text-lg mb-2">
+                        -
+                    </p>
+                    <p id="leadership-desc" class="text-xs md:text-sm text-timber/90 leading-relaxed">
+                        -
+                    </p>
+                </div>
+
+                <!-- Open Reflection Form -->
+                <div class="bg-indigoForest/80 rounded-xl p-5 border border-brass/30 mb-6">
+                    <h3 class="font-cinzel font-bold text-brass text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square"></i> Form Refleksi Kritis Siswa (Tugas Buku Catatan/Guru)
+                    </h3>
+                    <p class="text-xs text-papiro/80 mb-4">
+                        Menurut pendapat kritis Anda, bagaimana cara terbaik menyeimbangkan antara pembangunan fisik megacity Sorong dengan penghormatan terhadap tanah ulayat dan hak adat Suku Moi?
+                    </p>
+                    <textarea id="reflection-input" rows="4" class="w-full rounded-lg bg-timber border border-brass/40 p-3 text-sm text-papiro focus:outline-none focus:border-brass" placeholder="Tuliskan jawaban refleksi Anda di sini..."></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-end">
+                    <button onclick="restartGame()" class="px-5 py-2.5 rounded-lg border border-brass/50 text-papiro hover:bg-brass/20 text-sm font-semibold transition">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Ulangi Simulasi
+                    </button>
+                    <button onclick="copyTaskReport()" class="btn-brass px-6 py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-copy"></i> Salin Laporan Tugas
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-8 py-4 text-center border-t border-brass/20 text-xs text-papiro/60">
+        <p>© 2026 Suplemen Digital Pembelajaran Sejarah & Budaya Papua — Bab 5</p>
+    </footer>
+
+    <!-- TUTORIAL SPOTLIGHT & CLOUD TEXT OVERLAY -->
+    <div id="tutorial-overlay" class="hidden">
+        <div id="spotlight-overlay"></div>
+        <div id="spotlight-box" class="spotlight-ring"></div>
+        
+        <!-- Cloud Speech Bubble (Papiro / Scroll look) -->
+        <div id="tutorial-cloud" class="fixed z-[100] max-w-sm w-[90vw] papiro-card rounded-2xl p-5 border-2 border-brass shadow-2xl transition-all duration-300">
+            <div class="flex items-center gap-2 mb-2 pb-2 border-b border-timber/20">
+                <i class="fa-solid fa-compass text-brassDark text-lg"></i>
+                <h4 id="tut-title" class="font-cinzel font-bold text-timber text-base">Panduan Tutorial</h4>
+            </div>
+            <p id="tut-text" class="text-xs md:text-sm text-timber/90 leading-relaxed mb-4">
+                Petunjuk tutorial akan muncul di sini.
+            </p>
+            <div class="flex justify-between items-center gap-2">
+                <span id="tut-step-count" class="text-[11px] font-bold text-timber/60">Langkah 1/4</span>
+                <div class="flex gap-2">
+                    <button id="tut-btn-prev" onclick="prevTutorialStep()" class="px-3 py-1 rounded bg-timber/10 hover:bg-timber/20 text-timber text-xs font-bold transition">
+                        Sebelum
+                    </button>
+                    <button id="tut-btn-next" onclick="nextTutorialStep()" class="px-4 py-1 rounded btn-brass text-xs font-bold transition">
+                        Lanjut
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden papiro-card px-4 py-3 rounded-xl border border-brass shadow-lg text-xs font-bold text-timber flex items-center gap-2">
+        <i class="fa-solid fa-circle-check text-green-700 text-base"></i>
+        <span id="toast-msg">Laporan berhasil disalin!</span>
+    </div>
+
+    <!-- JAVASCRIPT GAME LOGIC -->
+    <script>
+        // Game State Variables
+        let currentScenario = 0;
+        let scoreKemajuan = 50;
+        let scoreBudaya = 50;
+        let userChoices = [];
+
+        // Scenarios Dataset for Bab 5
+        const scenarios = [
+            {
+                location: "Sorong Kepulauan & Pesisir",
+                title: "1. Reklamasi Mega Pelabuhan Peti Kemas",
+                description: "Pemerintah merencanakan ekspansi Pelabuhan Sorong menjadi Pusat Hub Internasional Pasifik. Namun proyek ini membutuhkan reklamasi pantai pesisir yang mencakup zona nelayan tradisional dan ruang lintas kora-kora adat.",
+                options: [
+                    {
+                        text: "Lakukan reklamasi penuh demi efisiensi ekonomi dan daya saing logistik internasional.",
+                        impactKemajuan: +20,
+                        impactBudaya: -20,
+                        feedback: "Keputusan ini mendorong lonjakan pendapatan pelabuhan, namun memicu hilangnya mata pencaharian nelayan lokal Moi serta merusak ekosistem pesisir tradisional."
+                    },
+                    {
+                        text: "Terapkan desain Pelabuhan Terapung Ramah Lingkungan & Konservasi Alur Adat.",
+                        impactKemajuan: +10,
+                        impactBudaya: +10,
+                        feedback: "Solusi inovatif yang menjaga tradisi maritim lokal sekaligus meningkatkan kapasitas logistik kota walau membutuhkan investasi awal yang lebih tinggi."
+                    },
+                    {
+                        text: "Ganti proyek pelabuhan dengan pasar perikanan tradisional modern serba lokal.",
+                        impactKemajuan: -10,
+                        impactBudaya: +20,
+                        feedback: "Menjaga keutuhan adat budaya pesisir secara maksimal, namunSorong kehilangan peluang emas menjadi hub ekonomi utama di Indonesia Timur."
+                    },
+                    {
+                        text: "Musyawarah Adat (BAMAG Moi) untuk menentukan pola dividen saham publik nelayan.",
+                        impactKemajuan: +15,
+                        impactBudaya: +15,
+                        feedback: "Integrasi ekonomi inklusif! Masyarakat adat mendapatkan jaminan saham dan partisipasi langsung dalam tata kelola pelabuhan modern."
+                    }
+                ]
+            },
+            {
+                location: "Klamono & Koridor Industri Minyak",
+                title: "2. Revitalisasi Kilang Minyak & Cagar Sagu",
+                description: "Investor mengajukan perluasan fasilitas pipa gas & minyak di wilayah hinterland Sorong. Jalur pipa baru direncanakan melintasi Hutan Sagu Dusun Pusaka milik masyarakat adat Suku Moi.",
+                options: [
+                    {
+                        text: "Izinkan pembukaan Hutan Sagu secara masif demi pasokan energi perkotaan 2030.",
+                        impactKemajuan: +25,
+                        impactBudaya: -25,
+                        feedback: "Pasokan energi kota Sorong sangat terjamin, tetapi terjadi degradasi hutan sagu ulayat yang merupakan identitas kedaulatan pangan lokal."
+                    },
+                    {
+                        text: "Alihkan jalur pipa mengitari hutan sagu (Detour) & tetapkan Hutan Sagu sebagai Cagar Abadi.",
+                        impactKemajuan: +10,
+                        impactBudaya: +15,
+                        feedback: "Memerlukan biaya konstruksi tambahan untuk memutar jalur pipa, namun berhasil mengamankan situs pangan adat dan warisan ekologis Moi."
+                    },
+                    {
+                        text: "Gunakan teknologi Underground Pipelining tanpa merusak substrat permukaan hutan sagu.",
+                        impactKemajuan: +15,
+                        impactBudaya: +10,
+                        feedback: "Pendekatan berbasis teknologi tinggi yang mampu menyelaraskan kebutuhan energi industri tanpa menggusur vegetasi sagu di permukaan."
+                    },
+                    {
+                        text: "Tolak proyek alokasi migas dan fokus pada kilang biomass energi sagu komunal.",
+                        impactKemajuan: -15,
+                        impactBudaya: +20,
+                        feedback: "Inisiatif hijau berorientasi lokal, namun belum mencukupi tuntutan energi kawasan metropolis Sorong yang tumbuh pesat."
+                    }
+                ]
+            },
+            {
+                location: "Pusat Kota Sorong",
+                title: "3. Landmark Kota: Mega Mall vs Pusat Kebudayaan Moi",
+                description: "Lahan strategis di pusat kota Sorong siap dibangun. Investor menawarkan pembangunan Shopping Mall & Hotel Bintang 5, sedangkan Lembaga Adat mengusulkan Rumah Besar Kebudayaan Moi (Malamoi Cultural Center).",
+                options: [
+                    {
+                        text: "Bangun Mega Mall 100% untuk menarik investasi swasta dan pusat belanja modern.",
+                        impactKemajuan: +20,
+                        impactBudaya: -15,
+                        feedback: "Kota Sorong menjadi magnet komersial bergaya hidup modern, namun wajah kota kehilangan karakter etnisitas Papua Barat Daya."
+                    },
+                    {
+                        text: "Bangun Pusat Kebudayaan Moi sebagai iklim diplomasi seni & museum sejarah.",
+                        impactKemajuan: -5,
+                        impactBudaya: +25,
+                        feedback: "Menjadi pusat edukasi dan kebanggaan identitas lokal Papua, memikat wisatawan mancanegara berbasis wisata budaya."
+                    },
+                    {
+                        text: "Desain Hybrid: Mall Modern berkonsep Arsitektur Etnik Moi dengan Pasar Seni Adat.",
+                        impactKemajuan: +15,
+                        impactBudaya: +15,
+                        feedback: "Kombinasi yang ideal! Pusat komersial yang sekaligus menjadi etalase promosi karya seni kain timur dan ukiran khas Suku Moi."
+                    },
+                    {
+                        text: "Biarkan lahan kosong sebagai RTH (RTH Taman Kota Tropis Sagu).",
+                        impactKemajuan: +0,
+                        impactBudaya: +10,
+                        feedback: "Menyediakan ruang terbuka hijau segar di tengah kota, meskipun tidak menghasilkan pemasukan ekonomi signifikan."
+                    }
+                ]
+            },
+            {
+                location: "Jalur Transportasi Urban",
+                title: "4. Sistem Transportasi Metropolis: Jalan Tol vs Koridor Maritim",
+                description: "Kemacetan mulai mengancam lalu lintas Sorong 2030. Pilihan infrastruktur terletak antara pembangunan jalan tol layang mengarungi kota atau revitalisasi transportasi air berbasis perahu kora-kora cepat.",
+                options: [
+                    {
+                        text: "Fokus pada Tol Layang Urban untuk kendaraan bermotor dan jaringan jalan raya.",
+                        impactKemajuan: +20,
+                        impactBudaya: -10,
+                        feedback: "Mobilisasi kendaraan roda empat sangat cepat, namun memicu ketergantungan bahan bakar fosil dan polusi tata kota."
+                    },
+                    {
+                        text: "Bangun Sistem Bus Rapid Transit (BRT) Terintegrasi Jalur Perahu Pesisir.",
+                        impactKemajuan: +15,
+                        impactBudaya: +15,
+                        feedback: "Menghubungkan darat dan laut secara harmonis, menghidupkan kembali moda transportasi perairan tradisional yang modern."
+                    },
+                    {
+                        text: "Utamakan jalur pejalan kaki bermotif tenun Moi dan kendaraan listrik bebas emisi.",
+                        impactKemajuan: +10,
+                        impactBudaya: +20,
+                        feedback: "Sorong menjadi kota hijau berkelanjutan dan ramah pejalan kaki dengan sentuhan estetika motif lokal di tiap sudut jalan."
+                    },
+                    {
+                        text: "Tunda pembangunan infrastruktur dan terapkan pembatasan pelat nomor kendaraan.",
+                        impactKemajuan: -10,
+                        impactBudaya: +0,
+                        feedback: "Langkah pembatasan murah meriah, namun tidak menyelesaikan akar tantangan mobilitas kota masa depan."
+                    }
+                ]
+            },
+            {
+                location: "Kawasan Tata Ruang & Pemerintahan",
+                title: "5. Penerapan Hukum Adat SASI dalam Regulasi Tata Kota",
+                description: "DPRD Sorong mengusulkan adopsi tradisi 'SASI' (Sistem Konservasi Adat Jeda Panen) ke dalam Peraturan Daerah Tata Ruang Kota untuk mencegah eksploitasi lingkungan berlebihan.",
+                options: [
+                    {
+                        text: "Tolak SASI dalam Perda karena dianggap dapat menghambat investasi proyek komersial.",
+                        impactKemajuan: +15,
+                        impactBudaya: -25,
+                        feedback: "Pembangunan fisik beraspal tanpa batas, namun risiko bencana ekologis dan ketegangan dengan masyarakat adat meningkat."
+                    },
+                    {
+                        text: "Tetapkan SASI Perkotaan: Cooldown Pembangunan berkala di zona rawan ekologis.",
+                        impactKemajuan: +10,
+                        impactBudaya: +25,
+                        feedback: "Keputusan monumental! Ilmu pengetahuan modern dan kearifan lokal SASI berpadu menjaga keseimbangan alam dan kota."
+                    },
+                    {
+                        text: "Terapkan SASI hanya di kawasan hutan lindung luar kota.",
+                        impactKemajuan: +10,
+                        impactBudaya: +10,
+                        feedback: "Kompromi sedang yang melindungi kawasan pinggiran, namun kawasan inti kota tetap terpapar dampak urbanisasi pesat."
+                    },
+                    {
+                        text: "Serahkan seluruh izin regulasi kota kepada konsorsium swasta asing.",
+                        impactKemajuan: +20,
+                        impactBudaya: -30,
+                        feedback: "Pertumbuhan infrastruktur sangat cepat, namun kedaulatan warga lokal dan identitas daerah terancam terpinggirkan."
+                    }
+                ]
+            }
+        ];
+
+        // Render Active Scenario
+        function renderScenario() {
+            const sc = scenarios[currentScenario];
+            document.getElementById('scenario-badge').innerText = `Skenario ${currentScenario + 1} / ${scenarios.length}`;
+            document.getElementById('scenario-location').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${sc.location}`;
+            document.getElementById('scenario-title').innerText = sc.title;
+            document.getElementById('scenario-description').innerText = sc.description;
+
+            // Render options
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`opt-text-${i}`).innerText = sc.options[i].text;
+            }
+
+            // Hide feedback box & reset choice buttons state
+            document.getElementById('feedback-box').classList.add('hidden');
+            enableChoiceButtons(true);
+        }
+
+        function enableChoiceButtons(enable) {
+            const btns = document.querySelectorAll('.choice-btn');
+            btns.forEach(btn => {
+                btn.disabled = !enable;
+                if (enable) {
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+        }
+
+        function selectOption(index) {
+            const sc = scenarios[currentScenario];
+            const opt = sc.options[index];
+
+            // Apply impacts
+            scoreKemajuan = Math.max(0, Math.min(100, scoreKemajuan + opt.impactKemajuan));
+            scoreBudaya = Math.max(0, Math.min(100, scoreBudaya + opt.impactBudaya));
+
+            // Record choice
+            userChoices.push({
+                scenarioIndex: currentScenario,
+                optionIndex: index,
+                impactK: opt.impactKemajuan,
+                impactB: opt.impactBudaya
+            });
+
+            // Update Meters UI
+            updateMeters();
+
+            // Display Feedback Box
+            const fbBox = document.getElementById('feedback-box');
+            document.getElementById('feedback-text').innerText = opt.feedback;
+            
+            const impK = document.getElementById('impact-kemajuan');
+            const impB = document.getElementById('impact-budaya');
+            
+            impK.innerText = `Kemajuan: ${opt.impactKemajuan >= 0 ? '+' : ''}${opt.impactKemajuan}%`;
+            impB.innerText = `Budaya: ${opt.impactBudaya >= 0 ? '+' : ''}${opt.impactBudaya}%`;
+
+            fbBox.classList.remove('hidden');
+            enableChoiceButtons(false);
+        }
+
+        function updateMeters() {
+            document.getElementById('score-kemajuan-text').innerText = `${scoreKemajuan}%`;
+            document.getElementById('bar-kemajuan').style.width = `${scoreKemajuan}%`;
+
+            document.getElementById('score-budaya-text').innerText = `${scoreBudaya}%`;
+            document.getElementById('bar-budaya').style.width = `${scoreBudaya}%`;
+        }
+
+        function nextScenario() {
+            currentScenario++;
+            if (currentScenario < scenarios.length) {
+                renderScenario();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('scenario-card').classList.add('hidden');
+            document.getElementById('result-card').classList.remove('hidden');
+
+            document.getElementById('final-kemajuan').innerText = `${scoreKemajuan}%`;
+            document.getElementById('final-budaya').innerText = `${scoreBudaya}%`;
+
+            // Determine Leadership Profile
+            let title = "";
+            let desc = "";
+
+            if (scoreKemajuan >= 60 && scoreBudaya >= 60) {
+                title = "Pemimpin Visioner Metropolis Berkelanjutan (Malamoi Metropolis)";
+                desc = "Luar biasa! Anda berhasil mentransformasi Sorong menjadi kota modern yang maju pesat tanpa mengorbankan identitas budaya Suku Moi dan kelestarian alam ulayat.";
+            } else if (scoreKemajuan > scoreBudaya) {
+                title = "Teknokrat Modernis Industri (Sorong Boomtown)";
+                desc = "Kota Sorong tumbuh menjadi pusat pertumbuhan ekonomi dan logistik yang sangat kuat, namun nilai-nilai adat dan ruang hidup budaya lokal terancam tergerus pesatnya beton urbanisasi.";
+            } else if (scoreBudaya > scoreKemajuan) {
+                title = "Garda Pelestari Warisan Adat & Ekologi";
+                desc = "Anda sangat berpihak pada perlindungan cagar sagu dan hak-hak adat Suku Moi. Namun, kecepatan modernisasi infrastruktur kota Sorong menjadi agak tertinggal dibanding kota lain.";
+            } else {
+                title = "Pengambil Kebijakan Transisi Tata Kota";
+                desc = "Kota Sorong berada dalam kondisi seimbang moderat, memerlukan terobosan kebijakan yang lebih berani untuk mengoptimalkan potensi daerah.";
+            }
+
+            document.getElementById('leadership-title').innerText = title;
+            document.getElementById('leadership-desc').innerText = desc;
+        }
+
+        function restartGame() {
+            currentScenario = 0;
+            scoreKemajuan = 50;
+            scoreBudaya = 50;
+            userChoices = [];
+            updateMeters();
+            document.getElementById('result-card').classList.add('hidden');
+            document.getElementById('scenario-card').classList.remove('hidden');
+            renderScenario();
+        }
+
+        function copyTaskReport() {
+            const reflectionText = document.getElementById('reflection-input').value.trim();
+            const leadershipTitle = document.getElementById('leadership-title').innerText;
+            
+            const report = `====================================
+LAPORAN TUGAS GAME EDUKASI BAB 5
+"Sorong 2030: The Grand Metropolis of Southwest Papua"
+====================================
+Skor Akhir Simulasi:
+- Meter Kemajuan & Ekonomi  : ${scoreKemajuan}%
+- Meter Identitas Budaya   : ${scoreBudaya}%
+
+Predikat Kepemimpinan:
+${leadershipTitle}
+
+Refleksi Kritis Siswa:
+"${reflectionText || 'Belum diisi'}"
+====================================`;
+
+            // ExecCommand for iframe compliance
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = report;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            // Show Toast
+            const toast = document.getElementById('toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        const tutorialSteps = [
+            {
+                targetId: "status-dashboard",
+                title: "Indikator Keseimbangan Kota",
+                text: "Perhatikan Meter Kemajuan dan Meter Budaya di bagian atas. Setiap keputusan pembangunan yang Anda ambil akan memengaruhi kedua indikator ini secara real-time."
+            },
+            {
+                targetId: "scenario-card",
+                title: "Dilema Tata Kota Sorong 2030",
+                text: "Di sini Anda akan dihadapkan pada 5 skenario dilema strategis pembangunan kota Sorong, mulai dari proyek pelabuhan peti kemas hingga hukum adat SASI."
+            },
+            {
+                targetId: "choices-container",
+                title: "4 Pilihan Aksi Kritis",
+                text: "Pilihlah 1 dari 4 opsi aksi yang tersedia (A, B, C, D). Pertimbangkan baik-baik trade-off dampak ekonomi dan pelestarian budaya Papua."
+            },
+            {
+                targetId: "btn-tutorial",
+                title: "Siap Memulai Simulasi!",
+                text: "Anda dapat membuka kembali panduan tutorial ini kapan saja dengan menekan tombol ini. Selamat merancang Sorong 2030!"
+            }
+        ];
+
+        let currentTutStep = 0;
+
+        function startTutorial() {
+            currentTutStep = 0;
+            document.getElementById('tutorial-overlay').classList.remove('hidden');
+            showTutStep();
+        }
+
+        function showTutStep() {
+            const step = tutorialSteps[currentTutStep];
+            const targetEl = document.getElementById(step.targetId);
+            
+            document.getElementById('tut-title').innerText = step.title;
+            document.getElementById('tut-text').innerText = step.text;
+            document.getElementById('tut-step-count').innerText = `Langkah ${currentTutStep + 1}/${tutorialSteps.length}`;
+
+            // Buttons state
+            document.getElementById('tut-btn-prev').style.display = currentTutStep === 0 ? 'none' : 'inline-block';
+            document.getElementById('tut-btn-next').innerText = currentTutStep === tutorialSteps.length - 1 ? 'Mulai Main' : 'Lanjut';
+
+            // Positioning Spotlight Ring & Cloud Text
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                setTimeout(() => {
+                    const rect = targetEl.getBoundingClientRect();
+                    const ring = document.getElementById('spotlight-box');
+                    const cloud = document.getElementById('tutorial-cloud');
+
+                    // Spotlight Ring Dimensions
+                    ring.style.top = `${rect.top + window.scrollY - 8}px`;
+                    ring.style.left = `${rect.left + window.scrollX - 8}px`;
+                    ring.style.width = `${rect.width + 16}px`;
+                    ring.style.height = `${rect.height + 16}px`;
+
+                    // Cloud Bubble Position
+                    let cloudTop = rect.bottom + window.scrollY + 16;
+                    if (cloudTop + 200 > document.body.scrollHeight) {
+                        cloudTop = rect.top + window.scrollY - 220;
+                    }
+                    cloud.style.top = `${Math.max(20, cloudTop)}px`;
+                    cloud.style.left = `${Math.max(10, rect.left + (rect.width / 2) - 180)}px`;
+                }, 300);
+            }
+        }
+
+        function nextTutorialStep() {
+            if (currentTutStep < tutorialSteps.length - 1) {
+                currentTutStep++;
+                showTutStep();
+            } else {
+                closeTutorial();
+            }
+        }
+
+        function prevTutorialStep() {
+            if (currentTutStep > 0) {
+                currentTutStep--;
+                showTutStep();
+            }
+        }
+
+        function closeTutorial() {
+            document.getElementById('tutorial-overlay').classList.add('hidden');
+        }
+
+        // Initialize App on Load
+        window.onload = function() {
+            renderScenario();
+        };
+    </script>
+</body>
+</html>
