@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gim Edukasi: Sorong Modern Quest</title>
+    <style>
+        :root {
+            --bg: #0b132b;
+            --card-bg: #1c2541;
+            --accent-cyan: #48cae4;
+            --accent-gold: #ffb703;
+            --text: #edf2f4;
+            --text-sub: #8d99ae;
+            --success: #06d6a0;
+            --danger: #ef233c;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 15px; }
+
+        .container {
+            width: 100%; max-width: 800px; background: var(--card-bg);
+            border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            border: 2px solid #3a506b; padding: 25px; position: relative; overflow: hidden;
+        }
+
+        /* Top Bar Info */
+        .hud { display: flex; justify-content: space-between; align-items: center; background: #0b132b; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; }
+        .hud-item { font-weight: bold; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; }
+        .lives { color: var(--danger); font-size: 1.2rem; }
+
+        .progress-bar-container { width: 100%; height: 8px; background: #3a506b; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-cyan), var(--success)); transition: width 0.3s ease; }
+
+        .screen { display: none; animation: slideUp 0.4s ease-out; }
+        .screen.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Start Screen */
+        .title { text-align: center; color: var(--accent-gold); font-size: 1.8rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .subtitle { text-align: center; color: var(--text-sub); font-size: 0.95rem; margin-bottom: 20px; }
+        
+        .materi-card { background: #0b132b; padding: 18px; border-radius: 12px; max-height: 320px; overflow-y: auto; border: 1px solid #3a506b; margin-bottom: 20px; line-height: 1.6; font-size: 0.9rem; }
+        .materi-card h3 { color: var(--accent-cyan); margin-top: 10px; margin-bottom: 5px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.82rem; }
+        th, td { border: 1px solid #3a506b; padding: 8px; text-align: left; }
+        th { background: #1c2541; color: var(--accent-gold); }
+
+        /* Question Elements */
+        .q-meta { display: flex; justify-content: space-between; color: var(--accent-cyan); font-weight: bold; font-size: 0.9rem; margin-bottom: 10px; }
+        .q-text { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .opt-btn {
+            background: #2b2d42; color: var(--text); border: 2px solid #3a506b;
+            padding: 14px 18px; border-radius: 12px; text-align: left; font-size: 0.95rem;
+            cursor: pointer; transition: all 0.2s ease; position: relative;
+        }
+        .opt-btn:hover:not(:disabled) { background: #3a506b; border-color: var(--accent-cyan); transform: translateX(4px); }
+        .opt-btn.correct { background: rgba(6, 214, 160, 0.2); border-color: var(--success); color: #a7f3d0; }
+        .opt-btn.wrong { background: rgba(239, 35, 60, 0.2); border-color: var(--danger); color: #fecdd3; }
+
+        /* Primary Button */
+        .btn {
+            width: 100%; background: linear-gradient(135deg, #00b4d8, #0077b6);
+            color: white; border: none; padding: 14px; border-radius: 12px;
+            font-size: 1rem; font-weight: bold; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 15px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 180, 216, 0.4); }
+
+        /* End Screen */
+        .result-box { text-align: center; }
+        .score-circle {
+            width: 120px; height: 120px; border-radius: 50%; background: #0b132b;
+            border: 4px solid var(--accent-gold); display: flex; justify-content: center;
+            align-items: center; margin: 15px auto; font-size: 2.2rem; font-weight: bold; color: var(--accent-gold);
+        }
+        .reflection-box { text-align: left; background: #0b132b; padding: 15px; border-radius: 12px; margin-top: 15px; }
+        .reflection-box textarea { width: 100%; height: 75px; background: #1c2541; color: white; border: 1px solid #3a506b; border-radius: 8px; padding: 10px; margin-top: 8px; resize: none; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- HUD Header -->
+    <div class="hud">
+        <div class="hud-item">❤️ Nyawa: <span class="lives" id="lives-display">❤❤❤</span></div>
+        <div class="hud-item" style="color: var(--accent-gold);">⭐ Skor: <span id="score-display">0</span></div>
+        <div class="hud-item" style="color: var(--accent-cyan);">🔥 Streak: <span id="streak-display">0</span></div>
+    </div>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen active">
+        <h1 class="title">Sorong Modern Quest</h1>
+        <p class="subtitle">Eksplorasi Sejarah, Budaya Malamoi, & Landmark Kota Sorong</p>
+        
+        <div class="materi-card">
+            <h3>Bab 5: Sorong Modern</h3>
+            <p>Untuk memelihara nilai-nilai sejarah dan warisan budaya suku Moi di tengah tantangan zaman, generasi muda Sorong berinovasi menggunakan media edukasi interaktif modern. Pelestarian narasi Tanah Malamoi, mitos Gunung Maladofok, sistem pendidikan Kambik, dan perjuangan era NNGPM kini dikemas melalui media kreatif seperti Pop-Up Book sejarah lokal, Board Game edukatif budaya, serta aplikasi gim berbasis AR/Hybrid. Penggunaan teknologi ini terbukti efektif menarik minat Generasi Z dan Generasi Alpha.</p>
+
+            <h3>5.6 Matriks Transformasi Landmark</h3>
+            <table>
+                <thead>
+                    <tr><th>Landmark</th><th>Fungsi Dulu</th><th>Fungsi Modern</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Pulau Doom</td><td>Pemerintahan Belanda & Kilang Minyak</td><td>Cagar Budaya, Wisata Arsitektur, & Pemukiman Bahari</td></tr>
+                    <tr><td>Kawasan Remu</td><td>Rawa-rawa & Pinggiran</td><td>Pusat Bisnis Grosir, Pasar Remu, & Komersial</td></tr>
+                    <tr><td>Tanjung Kasuari</td><td>Benteng Artileri Jepang</td><td>Wisata Bahari, Ekowisata Pantai, & RTH</td></tr>
+                    <tr><td>KM 10 – 12</td><td>Hutan Penyangga & Akses Klamono</td><td>Perkantoran Gubernur PBD, Kampus, & Hunian</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button class="btn" onclick="startGame()">Mulai Jelajah (10 Soal)</button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="screen">
+        <div class="q-meta">
+            <span id="q-counter">Soal 1 / 10</span>
+            <span id="timer-display">⏳ 20s</span>
+        </div>
+        <div class="q-text" id="q-text">Teks Pertanyaan...</div>
+        <div class="options-list" id="options-box"></div>
+        <button class="btn" id="next-btn" onclick="nextQuestion()" style="display:none;">Lanjut Soal Berikutnya ➔</button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="screen">
+        <div class="result-box">
+            <h2>Petualangan Selesai!</h2>
+            <p style="color: var(--text-sub); margin-top: 5px;" id="result-status">Evaluasi Hasil Perjalanan Anda</p>
+            
+            <div class="score-circle" id="final-score">0</div>
+            <p id="result-feedback">Pesan evaluasi...</p>
+
+            <div class="reflection-box">
+                <label for="reflection-input"><strong>📝 Lembar Refleksi Siswa:</strong><br>
+                Menurut pendapatmu, bagaimana teknologi interaktif dapat membantu menjaga identitas budaya Suku Moi di era modern?</label>
+                <textarea id="reflection-input" placeholder="Ketik ide reflektif kamu di sini..."></textarea>
+            </div>
+
+            <button class="btn" onclick="restartGame()">Coba Lagi / Main Ulang</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Audio Synthesizer (Efek Suara)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+        } else if (type === 'wrong') {
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+            osc.frequency.setValueAtTime(174.61, audioCtx.currentTime + 0.1); // F3
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        }
+    }
+
+    const quizData = [
+        {
+            q: "Inovasi media edukasi modern apa yang diciptakan generasi muda Sorong untuk melestarikan sejarah dan budaya Suku Moi?",
+            options: [
+                "Brosur jalanan, koran mingguan, dan siaran radio FM",
+                "Pop-Up Book sejarah lokal, Board Game edukatif, serta aplikasi AR/Hybrid",
+                "Poster dinding, spanduk jalan, dan pamflet digital",
+                "Majalah cetak dan acara dokumenter televisi"
+            ],
+            correct: 1
+        },
+        {
+            q: "Teknologi media interaktif dalam pelestarian budaya Sorong terbukti sangat efektif memikat minat dari...",
+            options: [
+                "Generasi Baby Boomers dan Generasi X",
+                "Generasi Milenial dan Generasi X",
+                "Generasi Z dan Generasi Alpha",
+                "Generasi Kolonial dan Veteran NNGPM"
+            ],
+            correct: 2
+        },
+        {
+            q: "Warisan budaya dan narasi lokal berikut ini dikemas ke dalam media edukasi modern Sorong, KECUALI...",
+            options: [
+                "Sistem pendidikan tradisional Kambik",
+                "Mitos Gunung Maladofok",
+                "Narasi Tanah Malamoi & Perjuangan Era NNGPM",
+                "Perjanjian Internasional Linggajati"
+            ],
+            correct: 3
+        },
+        {
+            q: "Fungsi modern dari Pulau Doom yang dahulu merupakan pusat pemerintahan Belanda & kilang minyak awal adalah...",
+            options: [
+                "Kompleks perkantoran gubernur dan pusat universitas",
+                "Cagar budaya sejarah kolonial, wisata arsitektur, & pemukiman bahari",
+                "Pusat bisnis grosir dan kawasan komersial utama",
+                "Pos benteng artileri pantai dan ekowisata"
+            ],
+            correct: 1
+        },
+        {
+            q: "Sebelum menjadi kawasan komersial & Pasar Tradisional Remu, dahulu Kawasan Remu merupakan...",
+            options: [
+                "Hutan penyangga dan jalan utama ke Klamono",
+                "Pos benteng artileri pantai Jepang",
+                "Rawa-rawa dan daerah pinggiran",
+                "Kilang minyak utama NNGPM"
+            ],
+            correct: 2
+        },
+        {
+            q: "Fungsi utama Kawasan Remu dalam matriks tata ruang Sorong Modern adalah...",
+            options: [
+                "Destinasi ekowisata pantai dan ruang terbuka hijau",
+                "Pusat bisnis grosir, Pasar Tradisional Remu, & kawasan komersial utama",
+                "Kompleks perkantoran Gubernur PBD dan hunian modern",
+                "Cagar budaya dan pusat museum bahari"
+            ],
+            correct: 1
+        },
+        {
+            q: "Landmark Tanjung Kasuari memiliki rekam sejarah militer era lalu karena pernah difungsikan sebagai...",
+            options: [
+                "Pos benteng artileri pantai Jepang",
+                "Markas pusat pemerintahan kolonial Belanda",
+                "Kilang pengeboran minyak NNGPM",
+                "Pelabuhan perdagangan utama"
+            ],
+            correct: 0
+        },
+        {
+            q: "Transformasi Tanjung Kasuari pada era modern dimanfaatkan untuk sektor...",
+            options: [
+                "Industri manufaktur dan pemrosesan tambang",
+                "Destinasi wisata bahari, ekowisata pantai, & ruang terbuka hijau",
+                "Kompleks perkantoran pusat pemerintahan provinsi",
+                "Pergudangan logistik grosir"
+            ],
+            correct: 1
+        },
+        {
+            q: "Area KM 10 – 12 pada masa kolonial memiliki peran geografis dan logistik sebagai...",
+            options: [
+                "Pusat bisnis grosir dan pemukiman warga",
+                "Hutan penyangga dan jalan ke Klamono",
+                "Benteng artileri pantai dan pos militer",
+                "Cagar budaya dan wisata arsitektur"
+            ],
+            correct: 1
+        },
+        {
+            q: "Transformasi modern yang terjadi pada kawasan KM 10 – 12 Kota Sorong ditandai dengan hadirnya...",
+            options: [
+                "Kompleks perkantoran Gubernur PBD, pusat perguruan tinggi, & hunian modern",
+                "Cagar budaya sejarah kolonial dan tempat wisata bahari",
+                "Rawa-rawa konservasi dan cagar alam liar",
+                "Pusat kilang minyak dan pelabuhan laut"
+            ],
+            correct: 0
+        }
+    ];
+
+    let qIndex = 0;
+    let score = 0;
+    let streak = 0;
+    let lives = 3;
+    let timer;
+    let timeLeft = 20;
+    let canAnswer = true;
+
+    function startGame() {
+        qIndex = 0;
+        score = 0;
+        streak = 0;
+        lives = 3;
+        showScreen('quiz-screen');
+        updateHUD();
+        loadQuestion();
+    }
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function updateHUD() {
+        document.getElementById('score-display').innerText = score;
+        document.getElementById('streak-display').innerText = streak;
+        document.getElementById('lives-display').innerText = '❤'.repeat(lives) || '💀';
+        
+        const progress = (qIndex / quizData.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+    }
+
+    function loadQuestion() {
+        canAnswer = true;
+        clearInterval(timer);
+        timeLeft = 20;
+        updateTimerDisplay();
+
+        const data = quizData[qIndex];
+        document.getElementById('q-counter').innerText = `Soal ${qIndex + 1} / ${quizData.length}`;
+        document.getElementById('q-text').innerText = data.q;
+
+        const box = document.getElementById('options-box');
+        box.innerHTML = '';
+
+        data.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerText = opt;
+            btn.onclick = () => answerQuestion(idx, btn);
+            box.appendChild(btn);
+        });
+
+        document.getElementById('next-btn').style.display = 'none';
+
+        timer = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                handleTimeout();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        document.getElementById('timer-display').innerText = `⏳ ${timeLeft}s`;
+    }
+
+    function answerQuestion(selectedIdx, btn) {
+        if (!canAnswer) return;
+        canAnswer = false;
+        clearInterval(timer);
+
+        const data = quizData[qIndex];
+        const buttons = document.querySelectorAll('.opt-btn');
+
+        if (selectedIdx === data.correct) {
+            playSound('correct');
+            btn.classList.add('correct');
+            streak++;
+            score += 10 + (streak * 2); // Bonus streak
+        } else {
+            playSound('wrong');
+            btn.classList.add('wrong');
+            buttons[data.correct].classList.add('correct');
+            streak = 0;
+            lives--;
+        }
+
+        updateHUD();
+        document.getElementById('next-btn').style.display = 'block';
+
+        if (lives <= 0) {
+            setTimeout(endGame, 1000);
+        }
+    }
+
+    function handleTimeout() {
+        if (!canAnswer) return;
+        canAnswer = false;
+        playSound('wrong');
+
+        const data = quizData[qIndex];
+        const buttons = document.querySelectorAll('.opt-btn');
+        buttons[data.correct].classList.add('correct');
+
+        streak = 0;
+        lives--;
+        updateHUD();
+
+        document.getElementById('next-btn').style.display = 'block';
+        if (lives <= 0) {
+            setTimeout(endGame, 1000);
+        }
+    }
+
+    function nextQuestion() {
+        qIndex++;
+        if (qIndex < quizData.length && lives > 0) {
+            loadQuestion();
+        } else {
+            endGame();
+        }
+    }
+
+    function endGame() {
+        clearInterval(timer);
+        showScreen('result-screen');
+        document.getElementById('progress-bar').style.width = '100%';
+        
+        const finalSc = Math.round(score);
+        document.getElementById('final-score').innerText = finalSc;
+
+        const status = document.getElementById('result-status');
+        const feedback = document.getElementById('result-feedback');
+
+        if (lives <= 0) {
+            status.innerText = "Game Over! Nyawa Anda Habis.";
+            feedback.innerText = "Jangan menyerah! Pelajari kembali materi Bab 5 dan coba jelajah ulang.";
+        } else if (finalSc >= 100) {
+            status.innerText = "Sempurna! Penjelajah Utama Malamoi.";
+            feedback.innerText = "Luar biasa! Anda menguasai seluruh materi Sorong Modern & Matriks Landmark dengan sempurna!";
+        } else if (finalSc >= 60) {
+            status.innerText = "Hasil Bagus!";
+            feedback.innerText = "Pemahaman Anda tentang transformasi landmark Kota Sorong sudah sangat baik.";
+        } else {
+            status.innerText = "Perlu Latihan Lagi";
+            feedback.innerText = "Yuk baca kembali materi transformasi landmark dan coba mainkan lagi gim ini.";
+        }
+    }
+
+    function restartGame() {
+        document.getElementById('reflection-input').value = '';
+        showScreen('start-screen');
+    }
+</script>
+</body>
+</html>
